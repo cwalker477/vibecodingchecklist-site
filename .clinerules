@@ -1,0 +1,21 @@
+# Cline Rules for VibeCodingChecklist.com
+
+## Purpose
+This file acts as Cline's learning journal for the VibeCodingChecklist.com project. It captures important patterns, user preferences, technical decisions, and other project intelligence to ensure consistency and efficiency, especially given Cline's memory resets between sessions.
+
+## Key Areas to Document
+*   **Critical Implementation Paths:** Specific ways certain features should be built.
+*   **User Preferences & Workflow:** How the user prefers to interact, review code, or structure tasks.
+*   **Project-Specific Patterns:** Recurring code structures, naming conventions, or architectural choices unique to this project.
+*   **Known Challenges & Solutions:** Workarounds or specific approaches needed for tricky parts.
+*   **Evolution of Decisions:** Rationale behind significant changes in direction or technology.
+*   **Tool Usage Patterns:** Preferred ways of using specific tools (linters, formatters, build tools, MCP servers).
+*   **Technology Choices:** Specific versions, configurations, or libraries to use/avoid.
+
+## Current Rules & Patterns
+*(This section will be populated as patterns and preferences emerge during development)*
+
+*   **Memory Bank:** Always read all files in `memory-bank/` at the start of every task. Update relevant files (especially `activeContext.md` and `progress.md`) after significant changes or when requested via "update memory bank".
+*   **Initial Setup:** The core Memory Bank files have been created based on the initial project brief provided on 2025-03-28.
+
+*(Add new rules, patterns, or preferences below as they are identified and confirmed)*
