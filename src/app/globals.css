@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Styles for rehype-autolink-headings */
+@layer base {
+  /* Add scroll margin top to offset fixed header/TOC */
+  h2[id], h3[id] {
+    @apply scroll-mt-24 relative;
+  }
+
+  /* Style the anchor link added by rehype-autolink-headings */
+  .anchor-link {
+    @apply absolute left-[-1em] top-0 bottom-0 no-underline text-gray-400 opacity-0 transition-opacity;
+    /* Adjust 'left' value as needed */
+  }
+
+  /* Show anchor link on heading hover */
+  h2[id]:hover .anchor-link,
+  h3[id]:hover .anchor-link {
+    @apply opacity-100;
+  }
+}
