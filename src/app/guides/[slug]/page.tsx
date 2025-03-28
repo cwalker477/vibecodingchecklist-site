@@ -5,9 +5,11 @@ import { Metadata } from 'next'; // Import Metadata type
 import TableOfContents from '@/components/TableOfContents'; // Import the TOC component
 import BackToTop from '@/components/BackToTop'; // Import the BackToTop component
 
-// Define the shape of the params
-type Params = {
-  slug: string;
+// Define the props type for the Page component
+type PageProps = {
+  params: {
+    slug: string;
+  };
 };
 
 // Generate static paths for all guides
@@ -17,7 +19,8 @@ export async function generateStaticParams() {
 }
 
 // Generate metadata for the page
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+// Use inline type for params here as well for consistency
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   try {
     const postData = await getPostData('guides', params.slug);
     return {
@@ -33,12 +36,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   }
 }
 
-// Define the page component
-export default async function Page({
-  params,
-}: {
-  params: { slug: string };
-}) {
+// Define the page component using the PageProps type
+export default async function Page({ params }: PageProps) {
   let postData;
   try {
     // Fetch necessary data for the blog post using params.slug
@@ -75,6 +74,6 @@ export default async function Page({
 
       {/* Render Back to Top Button */}
       <BackToTop />
-    </div>
+    </div> // Add the missing closing div tag
   );
 }
