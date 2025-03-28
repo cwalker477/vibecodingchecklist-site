@@ -29,12 +29,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-// Define the page component using inline typing for params
 export default async function Page({
   params,
 }: {
   params: { slug: string };
 }) {
+  // your page logic here
   let postData;
   try {
     // Fetch necessary data for the blog post using params.slug
