@@ -5,13 +5,6 @@ import { Metadata } from 'next'; // Import Metadata type
 import TableOfContents from '@/components/TableOfContents'; // Import the TOC component
 import BackToTop from '@/components/BackToTop'; // Import the BackToTop component
 
-// Define the props type for the Page component
-type PageProps = {
-  params: {
-    slug: string;
-  };
-};
-
 // Generate static paths for all guides
 export async function generateStaticParams() {
   const paths = getAllPostIds('guides'); // Get slugs for the 'guides' subdirectory
@@ -36,8 +29,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-// Define the page component using the PageProps type
-export default async function Page({ params }: PageProps) {
+// Define the page component using inline typing for params
+export default async function Page({
+  params,
+}: {
+  params: { slug: string };
+}) {
   let postData;
   try {
     // Fetch necessary data for the blog post using params.slug
