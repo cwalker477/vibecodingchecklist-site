@@ -34,7 +34,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 // Define the page component
-export default async function GuidePost({ params }: { params: Params }) {
+export default async function Page({
+  params,
+}: {
+  params: { slug: string };
+}) {
   let postData;
   try {
     // Fetch necessary data for the blog post using params.slug
