@@ -1,9 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    // Removed "./src/pages/..." as we use App Router
+    "./app/**/*.{js,ts,jsx,tsx,mdx}", // Root app directory
+    "./src/**/*.{js,ts,jsx,tsx,mdx}", // Include src directory
+    // "./components/**/*.{js,ts,jsx,tsx,mdx}", // No longer needed at root
+    "./content/**/*.mdx", // Include content directory for MDX files
   ],
   theme: {
     extend: {
