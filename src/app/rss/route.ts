@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getAllPostsMetadata } from '@/lib/posts';
+import { getAllPostsMetadata, PostMetadata } from '../../../lib/posts';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vibecodingchecklist.vercel.app';
 
 function escapeXml(str: string): string {
+  // Correctly escapes characters for XML validity
   return str.replace(/[<>&'"]/g, (c) => {
     switch (c) {
       case '<': return '&lt;';
@@ -20,11 +21,15 @@ export async function GET() {
   const allGuides = getAllPostsMetadata('guides');
 
   const rssItems = allGuides
-    .map((guide) => {
+    .map((guide: PostMetadata) => {
       const guideUrl = `${SITE_URL}/guides/${guide.slug}`;
       const title = guide.title ? escapeXml(guide.title) : 'Untitled Post';
-      const description = guide.description ? escapeXml(guide.description) : 'A new guide from Vibe Coding Checklist.';
-      const pubDate = guide.publishedAt ? new Date(guide.publishedAt).toUTCString() : new Date().toUTCString();
+      const description = guide.description
+        ? escapeXml(guide.description)
+        : 'A new guide from Vibe Coding Checklist.';
+      const pubDate = guide.publishedAt
+        ? new Date(guide.publishedAt).toUTCString()
+        : new Date().toUTCString();
 
       return `
         <item>
