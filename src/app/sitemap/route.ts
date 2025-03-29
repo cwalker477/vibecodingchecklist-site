@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getAllPostsMetadata } from '@/lib/posts'; // Assuming '@/' alias for src/
+import { getAllPostsMetadata } from '@/lib/posts'; // Use @/ alias
 
 // IMPORTANT: Replace with your actual production domain
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://your-vercel-domain.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vibecodingchecklist.vercel.app'; // Updated fallback
 
 export async function GET() {
   // Fetch all guide metadata

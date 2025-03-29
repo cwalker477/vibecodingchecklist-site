@@ -1,15 +1,22 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkRehype from 'remark-rehype';
-import rehypeSlug from 'rehype-slug';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings'; // Import autolink headings
-import rehypeStringify from 'rehype-stringify';
-import { visit } from 'unist-util-visit';
-import { Root as HastRoot, Element as HastElement, Properties as HastProperties, Text as HastText } from 'hast'; // Import HAST types
+// Removed unified and related imports as we'll use next-mdx-remote
+// import { unified } from 'unified';
+// import remarkParse from 'remark-parse';
+// import remarkRehype from 'remark-rehype';
+// import rehypeSlug from 'rehype-slug';
+// import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+// import rehypeStringify from 'rehype-stringify';
+// import { visit } from 'unist-util-visit';
+// import { Root as HastRoot, Element as HastElement, Properties as HastProperties, Text as HastText } from 'hast';
 import readingTime from 'reading-time'; // Import reading-time
+import { serialize } from 'next-mdx-remote/serialize';
+import { MDXRemoteSerializeResult } from 'next-mdx-remote';
+// Optional: Add remark/rehype plugins for MDX serialization if needed
+import remarkGfm from 'remark-gfm'; // Example: GitHub Flavored Markdown
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 // Define the path to the content directory
 const contentDirectory = path.join(process.cwd(), 'content');
@@ -139,12 +146,10 @@ export function getAllPostSlugs(subDirectory: string) {
       });
 }
 
-// Function to get the content, headings, and metadata of a single post by slug
-// Updated to read .mdx and return PostMetadata structure
+// Function to get the serialized MDX source and metadata of a single post by slug
 export async function getPostData(subDirectory: string, slug: string): Promise<{
-  contentHtml: string;
-  headings: Heading[];
-} & PostMetadata> { // Return combined type
+  mdxSource: MDXRemoteSerializeResult; // Serialized source for MDXRemote
+} & PostMetadata> { // Return combined type including metadata
   const postsDirectory = path.join(contentDirectory, subDirectory);
   // Assume slug corresponds to filename for lookup, actual slug might differ in frontmatter
   const fullPath = path.join(postsDirectory, `${slug}.mdx`);
@@ -164,69 +169,41 @@ export async function getPostData(subDirectory: string, slug: string): Promise<{
   const stats = readingTime(matterResult.content);
   const calculatedReadingTime = Math.ceil(stats.minutes); // Round up
 
-  const headings: Heading[] = [];
+  // Serialize the MDX content
+  const mdxSource = await serialize(matterResult.content, {
+    // Optionally pass remark/rehype plugins
+    mdxOptions: {
+      remarkPlugins: [remarkGfm], // Add GFM support (tables, strikethrough, etc.)
+      rehypePlugins: [
+        rehypeSlug, // Add slugs to headings
+        [rehypeAutolinkHeadings, { // Add links to headings
+          behavior: 'append',
+          properties: { className: ['anchor-link'], ariaHidden: true, tabIndex: -1 },
+          content: { type: 'text', value: '#' }
+        }],
+      ],
+      format: 'mdx', // Specify format if needed, though usually inferred
+    },
+    // Pass frontmatter data to the MDX component if needed via scope
+    scope: frontmatter,
+  });
 
-  // Custom plugin to extract headings (runs after slugs and autolinks are added)
-  const extractHeadingsPlugin = () => (tree: HastRoot) => {
-    visit(tree, 'element', (node: HastElement) => {
-      if (node.tagName === 'h2' || node.tagName === 'h3') {
-        // Find the text content, potentially nested within an anchor tag added by autolink-headings
-        let text = '';
-        const linkNode = node.children.find(child => child.type === 'element' && child.tagName === 'a') as HastElement | undefined;
-        const textNode = (linkNode || node).children.find(child => child.type === 'text') as HastText | undefined;
-        text = textNode?.value || '';
 
-        const headingSlug = node.properties?.id as string || ''; // Get slug added by rehype-slug
-        if (text && headingSlug) {
-          headings.push({
-            level: node.tagName === 'h2' ? 2 : 3,
-            text,
-            slug: headingSlug, // Use the generated slug for the heading
-          });
-        }
-      }
-    });
-  };
-
-  // Use unified pipeline to process markdown/mdx content
-  // NOTE: For full MDX support (components), you'd typically use next-mdx-remote or similar
-  // This basic pipeline handles standard markdown within .mdx files
-  const processedContent = await unified()
-    .use(remarkParse) // Parse markdown
-    .use(remarkRehype, { allowDangerousHtml: true }) // Convert to rehype, allow potential HTML in MDX
-    .use(rehypeSlug) // Add slugs/ids to headings
-    .use(rehypeAutolinkHeadings, { // Add links to headings
-      behavior: 'append', // Append link inside heading
-      properties: {
-        className: ['anchor-link'], // Add class for styling
-        'aria-hidden': 'true',
-        tabIndex: -1,
-      },
-      content: { type: 'text', value: '#' } // Use '#' as link content
-    })
-    .use(extractHeadingsPlugin) // Extract headings after slugs/links are added
-    .use(rehypeStringify) // Convert AST to HTML string
-    .process(matterResult.content);
-
-  const contentHtml = processedContent.toString();
-
-  // Construct the final PostMetadata object
-  const postData: PostMetadata = {
-      slug: typeof frontmatter.slug === 'string' && frontmatter.slug ? frontmatter.slug : slug, // Prioritize frontmatter slug
+  // Construct the final PostMetadata object (excluding content)
+  const postMetadata: PostMetadata = {
+      slug: typeof frontmatter.slug === 'string' && frontmatter.slug ? frontmatter.slug : slug,
       title: frontmatter.title || 'Untitled Post',
-      publishedAt: frontmatter.publishedAt || new Date().toISOString(), // Default to now if missing
+      publishedAt: frontmatter.publishedAt || new Date().toISOString(),
       description: frontmatter.description || '',
       tags: frontmatter.tags || [],
       format: frontmatter.format || 'unknown',
-      readingTime: frontmatter.readingTime || calculatedReadingTime, // Prioritize frontmatter, fallback to calculated
-      ...frontmatter, // Include other fields
+      readingTime: frontmatter.readingTime ?? calculatedReadingTime, // Use frontmatter readingTime if present, else calculated
+      ...frontmatter,
   };
 
-
-  // Combine the data with the id, contentHtml, headings
+  // Combine the metadata with the serialized MDX source
   return {
-    ...postData, // Spread the metadata
-    contentHtml,
-    headings,
+    ...postMetadata,
+    mdxSource,
   };
 }

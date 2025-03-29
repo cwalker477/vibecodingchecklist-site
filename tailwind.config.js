@@ -9,7 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
-        serif: ['Playfair Display', 'serif'],
+        serif: ['Source Serif Pro', 'serif'], // Updated to Source Serif Pro
       },
       // Add other theme extensions if needed later
       // backgroundImage: {

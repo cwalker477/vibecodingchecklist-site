@@ -1,15 +1,26 @@
 import Link from 'next/link';
 
-// Define the props type based on the data returned by getAllPosts
-type PostCardProps = {
-  slug: string;
-  title: string;
-  date: string;
-  description?: string;
-  tags?: string[];
-};
+import { PostMetadata } from '@/lib/posts'; // Import PostMetadata for better typing
 
-export default function PostCard({ slug, title, date, description, tags }: PostCardProps) {
+// Update props to use PostMetadata fields
+type PostCardProps = Pick<PostMetadata, 'slug' | 'title' | 'publishedAt' | 'description' | 'tags'>;
+
+// Helper function to format date nicely
+function formatDate(isoString: string): string {
+  try {
+    return new Date(isoString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  } catch (e) {
+    console.error("Error formatting date:", isoString, e);
+    return isoString; // Fallback
+  }
+}
+
+
+export default function PostCard({ slug, title, publishedAt, description, tags }: PostCardProps) {
   return (
     <Link
       href={`/guides/${slug}`} // Link to the specific guide page
@@ -24,18 +35,18 @@ export default function PostCard({ slug, title, date, description, tags }: PostC
         </p>
       )}
       <div className="text-xs text-gray-500 dark:text-gray-500">
-        {new Date(date).toLocaleDateString()}
+        {formatDate(publishedAt)} {/* Use publishedAt and format */}
       </div>
-      {/* Optional: Display tags later */}
-      {/* {tags && tags.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-1">
+      {/* Uncommented and updated tag display */}
+      {tags && tags.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2"> {/* Added margin-top */}
           {tags.map((tag) => (
-            <span key={tag} className="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded">
-              {tag}
+            <span key={tag} className="text-xs font-medium bg-gray-100 text-gray-800 px-2 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"> {/* Consistent tag style */}
+              #{tag}
             </span>
           ))}
         </div>
-      )} */}
+      )}
     </Link>
   );
 }

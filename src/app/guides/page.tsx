@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getAllPostsMetadata } from '@/lib/posts'; // Assuming '@/' alias is configured for src/
+import { getAllPostsMetadata } from '@/lib/posts'; // Use @/ alias
 
 export const metadata = {
   title: 'Guides | Vibe Coding Checklist',
