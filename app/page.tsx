@@ -4,23 +4,25 @@ import Link from 'next/link';
 import { getAllPostsMetadata, PostMetadata } from '@/lib/posts'; 
 import PostCard from '@/components/PostCard'; 
 
-// Mark as async since getAllPostsMetadata might be async in the future, 
-// although currently it's synchronous file reading.
-// Also, add type annotation for posts map parameter.
-export default function HomePage() { 
-  // Fetch metadata for all guides from the "guides" directory.
+export default function HomePage() { // Removed async as getAllPostsMetadata is sync
   const posts = getAllPostsMetadata('guides');
 
   return (
-    <main className="p-8">
-      <section className="text-center mb-8">
-        <h1 className="text-4xl font-bold">Vibe Coding Checklist</h1>
-        <p className="text-lg text-gray-700 dark:text-gray-300"> {/* Added dark mode text */}
-          Your source for guides, checklists, and brain dumps on AI-assisted coding.
+    // Added dark mode text color for base text
+    <main className="max-w-5xl mx-auto px-6 py-16 font-sans text-neutral-800 dark:text-neutral-200"> 
+      <section className="mb-12 text-center">
+        {/* Added dark mode text color */}
+        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4 dark:text-neutral-100"> 
+          Vibe Coding Checklist
+        </h1>
+        {/* Added dark mode text color */}
+        <p className="text-lg md:text-xl text-neutral-500 dark:text-neutral-400"> 
+          Curated guides and insights for AI-powered developers.
         </p>
       </section>
-      {posts && posts.length > 0 ? (
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      {posts.length > 0 ? (
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Added type annotation */}
           {posts.map((post: PostMetadata) => ( 
             <PostCard
@@ -34,16 +36,17 @@ export default function HomePage() {
           ))}
         </section>
       ) : (
-        <p className="text-center text-gray-600 dark:text-gray-400">No guides found. Check back later.</p>
+        <p className="text-center text-neutral-400 text-sm">No guides published yet.</p>
       )}
-      <section className="mt-8 text-center">
+
+      <div className="mt-16 text-center">
         {/* Corrected Link usage for App Router */}
         <Link href="/guides" legacyBehavior={false}> 
-          <span className="cursor-pointer px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-            View All Guides
+          <span className="cursor-pointer inline-block text-blue-600 hover:text-blue-700 transition font-medium dark:text-blue-400 dark:hover:text-blue-300"> {/* Added dark mode colors */}
+            View All Guides →
           </span>
         </Link>
-      </section>
+      </div>
     </main>
   );
 }
