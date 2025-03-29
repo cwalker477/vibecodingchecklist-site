@@ -1,8 +1,9 @@
 // Removed "use client" as data fetching happens server-side now
 import Link from 'next/link';
 import { motion } from 'framer-motion'; // Keep client-side motion
-import { getAllPostsMetadata } from '@/lib/posts'; // Import the data fetching function
-import PostCard from '@/components/PostCard'; // Import the updated PostCard
+// Use direct paths from root for files outside src
+import { getAllPostsMetadata, PostMetadata } from 'lib/posts'; 
+import PostCard from 'components/PostCard'; 
 
 export default function HomePage() {
   // Fetch the latest 3 guides
@@ -53,7 +54,8 @@ export default function HomePage() {
         <h2 className="text-3xl font-serif font-semibold mb-8 text-center dark:text-neutral-100">Featured Guides</h2>
         {latestGuides.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {latestGuides.map((guide) => (
+            {/* Add explicit type for guide */}
+            {latestGuides.map((guide: PostMetadata) => ( 
               // Render PostCard with dynamic data
               <PostCard
                 key={guide.slug}
