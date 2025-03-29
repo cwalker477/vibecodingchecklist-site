@@ -31,9 +31,9 @@ body {
 
 /* Styles for rehype-autolink-headings */
 @layer base {
-  /* Add scroll margin top to offset fixed header/TOC */
+  /* Add scroll margin top to offset fixed header/TOC - Removed scroll-mt-24 */
   h2[id], h3[id] {
-    @apply scroll-mt-24 relative;
+    @apply relative; /* Keep relative positioning */
   }
 
   /* Style the anchor link added by rehype-autolink-headings */
