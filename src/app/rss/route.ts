@@ -4,7 +4,6 @@ import { getAllPostsMetadata, PostMetadata } from '../../../lib/posts';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vibecodingchecklist.vercel.app';
 
 function escapeXml(str: string): string {
-  // Correctly escapes characters for XML validity
   return str.replace(/[<>&'"]/g, (c) => {
     switch (c) {
       case '<': return '&lt;';
