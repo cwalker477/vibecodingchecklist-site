@@ -1,19 +1,19 @@
 import { NextResponse } from 'next/server';
 import { getAllPostsMetadata } from '@/lib/posts'; // Assuming '@/' alias for src/
 
-// IMPORTANT: Replace with your actual production domain
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://your-vercel-domain.com';
+// Use the actual Vercel domain as fallback
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vibecodingchecklist.vercel.app';
 
 // Function to escape XML characters
-function escapeXml(unsafe: string): string {
-  // Ensure proper XML entity escaping
-  return unsafe.replace(/[<>&'"]/g, (c) => {
+function escapeXml(str: string): string {
+  // Correctly escapes characters for XML validity
+  return str.replace(/[<>&'"]/g, (c) => {
     switch (c) {
-      case '<': return '<';   // Correct entity
-      case '>': return '>';   // Correct entity
-      case '&': return '&';  // Correct entity
-      case '\'': return '''; // Correct entity
-      case '"': return '"'; // Correct entity
+      case '<': return '<';
+      case '>': return '>';
+      case '&': return '&';
+      case "'": return ''';
+      case '"': return '"';
       default: return c;
     }
   });
@@ -29,7 +29,8 @@ export async function GET() {
 
       // Ensure required fields exist and format pubDate
       const title = guide.title ? escapeXml(guide.title) : 'Untitled Post';
-      const description = guide.description ? escapeXml(guide.description) : '';
+      // Use description or provide a default
+      const description = guide.description ? escapeXml(guide.description) : 'A new guide from Vibe Coding Checklist.';
       const pubDate = guide.publishedAt ? new Date(guide.publishedAt).toUTCString() : new Date().toUTCString();
 
       return `
@@ -38,7 +39,7 @@ export async function GET() {
           <link>${guideUrl}</link>
           <guid>${guideUrl}</guid>
           <pubDate>${pubDate}</pubDate>
-          ${description ? `<description>${description}</description>` : ''}
+          <description>${description}</description> 
         </item>
       `;
     })
