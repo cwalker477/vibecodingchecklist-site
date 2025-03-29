@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getAllPostsMetadata } from '@/lib/posts';
+import { getAllPostsMetadata } from '@/lib/posts'; // Use @/ alias
 
+// Use the actual Vercel domain as fallback
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vibecodingchecklist.vercel.app';
 
 // Function to escape XML characters
@@ -18,13 +19,13 @@ function escapeXml(str: string): string {
 }
 
 export async function GET() {
-  const allGuides = getAllPostsMetadata('guides');
+  const allGuides = getAllPostsMetadata('guides'); // Fetch all guide metadata
 
   const rssItems = allGuides
     .map((guide) => {
       const guideUrl = `${SITE_URL}/guides/${guide.slug}`;
       const title = guide.title ? escapeXml(guide.title) : 'Untitled Post';
-      const description = guide.description ? escapeXml(guide.description) : '';
+      const description = guide.description ? escapeXml(guide.description) : 'A new guide from Vibe Coding Checklist.';
       const pubDate = guide.publishedAt ? new Date(guide.publishedAt).toUTCString() : new Date().toUTCString();
 
       return `
@@ -33,7 +34,7 @@ export async function GET() {
           <link>${guideUrl}</link>
           <guid>${guideUrl}</guid>
           <pubDate>${pubDate}</pubDate>
-          <description>${description || 'A new guide from Vibe Coding Checklist.'}</description>
+          <description>${description}</description> 
         </item>
       `;
     })
@@ -60,5 +61,4 @@ export async function GET() {
   });
 }
 
-// Enforce dynamic rendering to ensure the feed is always up to date
 export const dynamic = 'force-dynamic';
