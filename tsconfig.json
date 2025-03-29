@@ -20,9 +20,19 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      // Map '@/' to the 'src' directory
+      "@/*": ["./src/*"] 
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  // Include files within src, plus root-level lib and components if they exist
+  // Adjust if your structure differs significantly
+  "include": [
+    "next-env.d.ts", 
+    "src/**/*.ts", 
+    "src/**/*.tsx", 
+    ".next/types/**/*.ts",
+    "lib/**/*.ts",       // Include root lib
+    "components/**/*.tsx" // Include root components
+  ], 
   "exclude": ["node_modules"]
 }
