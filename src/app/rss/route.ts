@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getAllPostsMetadata } from '@/lib/posts'; // Use @/ alias
+import { getAllPostsMetadata } from '@/lib/posts';
 
-// Use the actual Vercel domain as fallback
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vibecodingchecklist.vercel.app';
 
-// Function to escape XML characters
 function escapeXml(str: string): string {
   return str.replace(/[<>&'"]/g, (c) => {
     switch (c) {
@@ -19,7 +17,7 @@ function escapeXml(str: string): string {
 }
 
 export async function GET() {
-  const allGuides = getAllPostsMetadata('guides'); // Fetch all guide metadata
+  const allGuides = getAllPostsMetadata('guides');
 
   const rssItems = allGuides
     .map((guide) => {
@@ -34,7 +32,7 @@ export async function GET() {
           <link>${guideUrl}</link>
           <guid>${guideUrl}</guid>
           <pubDate>${pubDate}</pubDate>
-          <description>${description}</description> 
+          <description>${description}</description>
         </item>
       `;
     })
