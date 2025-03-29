@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { PostMetadata } from '@/lib/posts'; // Import PostMetadata for better typing
+import { PostMetadata } from '@/lib/posts'; // This alias should now work correctly
 
 // Update props to use PostMetadata fields
 type PostCardProps = Pick<PostMetadata, 'slug' | 'title' | 'publishedAt' | 'description' | 'tags'>;

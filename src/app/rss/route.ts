@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllPostsMetadata, PostMetadata } from '../../../lib/posts';
+import { getAllPostsMetadata, PostMetadata } from '@/lib/posts'; // Use @/ alias now lib is in src
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vibecodingchecklist.vercel.app';
 

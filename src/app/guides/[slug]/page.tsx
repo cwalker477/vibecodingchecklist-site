@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc'; // Import RSC version
-import { getAllPostSlugs, getPostData, PostMetadata } from '../../../../lib/posts'; // Correct relative path for root lib
+import { getAllPostSlugs, getPostData, PostMetadata } from '@/lib/posts'; // Use @/ alias now lib is in src
 import GuideLayout from '@/components/GuideLayout'; // Keep @/ alias for src components
 import remarkGfm from 'remark-gfm'; // Ensure plugins used during serialization are available for rendering if needed
 import rehypeSlug from 'rehype-slug';

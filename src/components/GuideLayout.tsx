@@ -1,5 +1,5 @@
 import React from 'react';
-import { PostMetadata } from '@/lib/posts'; // Use @/ alias
+import { PostMetadata } from '@/lib/posts'; // Use @/ alias now lib is in src
 
 interface GuideLayoutProps {
   meta: PostMetadata;

@@ -1,9 +1,9 @@
 // Removed "use client" as data fetching happens server-side now
 import Link from 'next/link';
 import { motion } from 'framer-motion'; // Keep client-side motion
-// Use direct paths from root for files outside src
-import { getAllPostsMetadata, PostMetadata } from 'lib/posts'; 
-import PostCard from 'components/PostCard'; 
+// Use @/ alias now that lib and components are in src
+import { getAllPostsMetadata, PostMetadata } from '@/lib/posts'; 
+import PostCard from '@/components/PostCard'; 
 
 export default function HomePage() {
   // Fetch the latest 3 guides
