@@ -12,10 +12,15 @@
 *   Moved Next.js project files from `vibecodingchecklist-site/` to the root directory.
 *   Removed the empty `vibecodingchecklist-site/` directory.
 *   Committed and pushed changes to GitHub.
+*   Resolved persistent Tailwind v4 build errors after migrating `gray` to `neutral` by adjusting configurations, reinstalling dependencies, and clearing caches.
+*   Fixed TypeScript syntax error in `src/app/rss/route.ts`.
+*   Applied initial dark mode theme styling and typography improvements (Inter font, spacing, contrast) to layout, homepage, and guide layout components.
 
 ## Next Steps
 
-*   **Verify Vercel Deployment:** Confirm the site deploys and functions correctly on Vercel with the new structure.
+*   **Verify Vercel Deployment:** Commit changes, push, and confirm the site builds and deploys correctly on Vercel.
+*   **Refine Dark Theme:** Continue applying and refining the dark mode theme across all components and content based on Notion/Medium inspiration.
+*   **Anchor Link Styling:** Revisit `.anchor-link` styling in `globals.css` if the current fallback colors are not ideal.
 *   **Production Polish:** Address SEO, Open Graph, `.env` configuration as per user guidance.
 *   **Start Implementing UI Blocks:** Begin creating components based on `uiBlocks.md`.
 

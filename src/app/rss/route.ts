@@ -10,7 +10,7 @@ function escapeXml(str: string): string {
       case '<': return '<';
       case '>': return '>';
       case '&': return '&';
-      case "'": return ''';
+      case "'": return '&#39;'; // Use character code for single quote
       case '"': return '"';
       default: return c;
     }
@@ -21,8 +21,9 @@ export async function GET() {
   const allGuides = getAllPostsMetadata('guides');
 
   const rssItems = allGuides
-    .map((guide: PostMetadata) => { 
+    .map((guide: PostMetadata) => {
       const guideUrl = `${SITE_URL}/guides/${guide.slug}`;
+      // Ensure title and description are escaped
       const title = guide.title ? escapeXml(guide.title) : 'Untitled Post';
       const description = guide.description ? escapeXml(guide.description) : 'A new guide from Vibe Coding Checklist.';
       const pubDate = guide.publishedAt ? new Date(guide.publishedAt).toUTCString() : new Date().toUTCString();

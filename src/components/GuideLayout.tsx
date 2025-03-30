@@ -22,10 +22,10 @@ function formatDate(isoString: string): string {
 
 const GuideLayout: React.FC<GuideLayoutProps> = ({ meta, children }) => {
   return (
-    // Use Inter font (applied via layout), adjust padding/max-width
-    <article className="container mx-auto px-6 py-12 md:py-16 max-w-3xl font-sans"> 
-      {/* Use dark border color */}
-      <header className="mb-10 border-b pb-8 border-neutral-200 dark:border-dark-border">
+    // Add leading-relaxed for readability
+    <article className="container mx-auto px-6 py-12 md:py-16 max-w-3xl font-sans leading-relaxed">
+      {/* Increase margin-bottom, use dark border color */}
+      <header className="mb-12 md:mb-16 border-b pb-8 border-neutral-200 dark:border-dark-border">
         {/* Use dark heading color, adjust size/weight */}
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4 text-neutral-900 dark:text-dark-heading">
           {meta.title}
@@ -38,9 +38,9 @@ const GuideLayout: React.FC<GuideLayoutProps> = ({ meta, children }) => {
         {meta.tags && meta.tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {meta.tags.map((tag) => (
-              // Use updated tag styles from PostCard
-              <span key={tag} className="text-xs font-medium bg-blue-50 dark:bg-dark-accent/10 text-dark-accent px-2.5 py-1 rounded-full">
-                {tag} 
+              // Refine dark mode tag style
+              <span key={tag} className="text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 px-2.5 py-1 rounded-full">
+                {tag}
               </span>
             ))}
           </div>

@@ -21,14 +21,15 @@ body {
   }
 
   /* Style the anchor link added by rehype-autolink-headings */
-   .anchor-link { 
+   .anchor-link {
      /* Removed @apply rule entirely */
      position: absolute;
-     left: -1em; 
+     left: -1em;
      /* top: 0; */ /* Removed */
      /* bottom: 0; */ /* Removed */
      text-decoration: none;
-     color: theme('colors.gray.400'); /* Apply color directly */
+     /* color: theme('colors.neutral.400'); */ /* Revert to fallback */
+     color: #a3a3a3; /* Fallback color (neutral-400 hex) */
      opacity: 0;
      transition-property: opacity;
      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -36,14 +37,15 @@ body {
    }
    /* Apply dark mode color directly */
    .dark .anchor-link {
-       color: theme('colors.gray.600');
+       /* color: theme('colors.neutral.600'); */ /* Revert to fallback */
+       color: #525252; /* Fallback color (neutral-600 hex) */
    }
 
 
   /* Show anchor link on heading hover */
-   h2[id]:hover .anchor-link, 
-   h3[id]:hover .anchor-link { 
+   h2[id]:hover .anchor-link,
+   h3[id]:hover .anchor-link {
      /* Removed @apply opacity-100; */
      opacity: 1; /* Apply directly */
-   } 
+   }
 }

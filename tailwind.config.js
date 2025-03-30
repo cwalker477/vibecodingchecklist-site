@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class", // Enable class-based dark mode
@@ -8,12 +10,13 @@ module.exports = {
     "./content/**/*.{md,mdx}", // Include content directory for MDX and MD files
   ],
   theme: {
-    extend: {
-      fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        serif: ['Source Serif Pro', 'serif'], 
-      },
+    fontFamily: { // Move fontFamily directly under theme
+      sans: ['Inter', 'sans-serif'],
+      serif: ['Source Serif Pro', 'serif'],
+    },
+    extend: { // Use extend for colors to merge with defaults
       colors: {
+        ...defaultTheme.colors, // Spread ALL default colors within extend
         'dark-bg': '#121212',      // Very dark gray background
         'dark-text': '#e0e0e0',    // Light gray body text
         'dark-heading': '#ffffff', // White for headings
@@ -21,14 +24,17 @@ module.exports = {
         'dark-accent': '#4ea8de',  // Accent blue
         'dark-card': '#1e1e1e',    // Slightly lighter card background (adjust from zinc-900 if needed)
         'dark-border': '#333333',  // Soft border color
+        // Custom dark colors will overwrite defaults if names clash
       },
-      // Add other theme extensions if needed later
+      // Keep extend INSIDE theme
       // backgroundImage: {
       //   "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       //   "gradient-conic":
       //     "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       // },
-    },
-  },
-  plugins: [require('@tailwindcss/typography')],
+    }, // Close extend
+  }, // Close theme
+  plugins: [
+    require('@tailwindcss/typography'), // Re-add typography plugin
+  ],
 };

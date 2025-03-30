@@ -62,7 +62,7 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
   return (
     // Basic styling - sticky positioning and mobile handling would be done in the parent layout
     <nav className="space-y-2 text-sm" aria-labelledby="toc-heading">
-      <h2 id="toc-heading" className="font-semibold text-gray-700 dark:text-gray-300 mb-3">On this page</h2>
+      <h2 id="toc-heading" className="font-semibold text-neutral-700 dark:text-neutral-300 mb-3">On this page</h2>
       <ul className="space-y-1">
         {headings.map((heading) => (
           <li key={heading.slug} className={`${heading.level === 3 ? 'ml-4' : ''}`}>
@@ -72,7 +72,7 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
                 activeSlug === heading.slug
                   ? 'text-blue-600 dark:text-blue-400 font-medium'
                   // ? 'text-blue-600 dark:text-blue-400 font-medium border-l-2 border-blue-600 pl-2' // Example active style
-                  : 'text-gray-600 dark:text-gray-400'
+                  : 'text-neutral-600 dark:text-neutral-400'
               }`}
               // Smooth scroll behavior can be added via CSS scroll-behavior: smooth; on <html>
               onClick={(e) => {

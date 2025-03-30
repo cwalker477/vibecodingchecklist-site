@@ -9,8 +9,8 @@ export default function HomePage() {
   const featuredPosts = posts.slice(0, 3); 
 
   return (
-    // Use Inter font (applied via layout), set base dark mode text color
-    <main className="max-w-5xl mx-auto px-6 py-16 md:py-24 font-sans text-neutral-800 dark:text-dark-text"> 
+    // Add leading-relaxed for better readability
+    <main className="max-w-5xl mx-auto px-6 py-16 md:py-24 font-sans text-neutral-800 dark:text-dark-text leading-relaxed">
       <section className="mb-16 md:mb-20 text-center">
         {/* Use dark heading color */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-4 text-neutral-900 dark:text-dark-heading"> 
@@ -24,9 +24,10 @@ export default function HomePage() {
 
       {featuredPosts.length > 0 && ( // Only show section if posts exist
         <section className="mb-16 md:mb-20">
+           {/* Ensure dark heading color is applied */}
            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-8 text-center text-neutral-900 dark:text-dark-heading">Featured Guides</h2>
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredPosts.map((post: PostMetadata) => ( 
+            {featuredPosts.map((post: PostMetadata) => (
               <PostCard
                 key={post.slug}
                 slug={post.slug}

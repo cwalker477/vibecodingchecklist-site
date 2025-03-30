@@ -17,6 +17,9 @@
 *   `activeContext.md` updated to reflect current status and next steps.
 *   Replaced `src/app/page.tsx` and `src/app/layout.tsx` with minimal working versions to troubleshoot root route 404.
 *   Corrected `next.config.ts` by removing unnecessary `experimental.appDir` setting.
+*   Resolved persistent Tailwind v4 build errors ("unknown utility class: text-neutral-*") through configuration adjustments (`tailwind.config.js`, `postcss.config.js`), dependency reinstallation (`@tailwindcss/typography`, `autoprefixer`), and cache clearing.
+*   Fixed TypeScript syntax error in `src/app/rss/route.ts`.
+*   Applied initial dark mode theme styling and typography improvements to layout, homepage, and guide layout components.
 
 ## What's Left to Build / Next Steps
 
@@ -33,5 +36,7 @@
 
 ## Known Issues / Blockers
 
-*   **Root Route 404:** Currently attempting to resolve the 404 error on the homepage (`/`) on Vercel deployment.
+*   **Root Route 404:** Previously resolved.
 *   **Dependency:** Further content/feature implementation is blocked pending receipt of the 7 prompt module outputs from the user.
+*   **Refine Dark Theme:** Continue applying and refining the dark mode theme across all components and content based on Notion/Medium inspiration.
+*   **Anchor Link Styling:** Revisit `.anchor-link` styling in `globals.css` if the current fallback colors are not ideal (the `@apply` rules caused build issues previously).
