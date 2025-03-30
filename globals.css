@@ -38,8 +38,8 @@ body {
 
   /* Style the anchor link added by rehype-autolink-headings */
   .anchor-link {
-    /* Removed top-0 for diagnostics */
-    @apply absolute left-[-1em] bottom-0 no-underline text-gray-400 opacity-0 transition-opacity; 
+    /* Removed top-0 and bottom-0 for diagnostics */
+    @apply absolute left-[-1em] no-underline text-gray-400 opacity-0 transition-opacity; 
     /* Adjust 'left' value as needed */
   }
 
