@@ -7,8 +7,13 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="font-sans"> {/* Apply base font */}
-      <body>{children}</body>
+    // Add dark class to html for class-based dark mode
+    // Apply base font-sans
+    <html lang="en" className="dark font-sans"> 
+      {/* Apply base background and text colors, dark mode variants */}
+      <body className="bg-white dark:bg-dark-bg text-neutral-800 dark:text-dark-text transition-colors duration-300">
+        {children}
+      </body>
     </html>
   );
 }

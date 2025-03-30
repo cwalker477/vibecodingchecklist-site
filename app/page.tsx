@@ -1,48 +1,50 @@
 import React from 'react';
 import Link from 'next/link';
-// Corrected imports using @/ alias
 import { getAllPostsMetadata, PostMetadata } from '@/lib/posts'; 
 import PostCard from '@/components/PostCard'; 
 
-export default function HomePage() { // Removed async as getAllPostsMetadata is sync
+export default function HomePage() { 
   const posts = getAllPostsMetadata('guides');
+  // Get latest 3 for featured section
+  const featuredPosts = posts.slice(0, 3); 
 
   return (
-    // Added dark mode text color for base text
-    <main className="max-w-5xl mx-auto px-6 py-16 font-sans text-neutral-800 dark:text-neutral-200"> 
-      <section className="mb-12 text-center">
-        {/* Added dark mode text color */}
-        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4 dark:text-neutral-100"> 
+    // Use Inter font (applied via layout), set base dark mode text color
+    <main className="max-w-5xl mx-auto px-6 py-16 md:py-24 font-sans text-neutral-800 dark:text-dark-text"> 
+      <section className="mb-16 md:mb-20 text-center">
+        {/* Use dark heading color */}
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-4 text-neutral-900 dark:text-dark-heading"> 
           Vibe Coding Checklist
         </h1>
-        {/* Added dark mode text color */}
-        <p className="text-lg md:text-xl text-neutral-500 dark:text-neutral-400"> 
+        {/* Use lighter dark text color */}
+        <p className="text-lg md:text-xl text-neutral-600 dark:text-dark-muted max-w-2xl mx-auto"> 
           Curated guides and insights for AI-powered developers.
         </p>
       </section>
 
-      {posts.length > 0 ? (
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Added type annotation */}
-          {posts.map((post: PostMetadata) => ( 
-            <PostCard
-              key={post.slug}
-              slug={post.slug}
-              title={post.title}
-              description={post.description}
-              publishedAt={post.publishedAt}
-              tags={post.tags}
-            />
-          ))}
+      {featuredPosts.length > 0 && ( // Only show section if posts exist
+        <section className="mb-16 md:mb-20">
+           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-8 text-center text-neutral-900 dark:text-dark-heading">Featured Guides</h2>
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredPosts.map((post: PostMetadata) => ( 
+              <PostCard
+                key={post.slug}
+                slug={post.slug}
+                title={post.title}
+                description={post.description}
+                publishedAt={post.publishedAt}
+                tags={post.tags}
+              />
+            ))}
+          </div>
         </section>
-      ) : (
-        <p className="text-center text-neutral-400 text-sm">No guides published yet.</p>
       )}
 
+      {/* Keep this section even if no posts, points to index */}
       <div className="mt-16 text-center">
-        {/* Corrected Link usage for App Router */}
         <Link href="/guides" legacyBehavior={false}> 
-          <span className="cursor-pointer inline-block text-blue-600 hover:text-blue-700 transition font-medium dark:text-blue-400 dark:hover:text-blue-300"> {/* Added dark mode colors */}
+          {/* Use accent color */}
+          <span className="cursor-pointer inline-block text-dark-accent hover:underline transition font-medium"> 
             View All Guides →
           </span>
         </Link>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { getAllPostsMetadata } from '@/lib/posts'; // Use @/ alias
+import { getAllPostsMetadata, PostMetadata } from '@/lib/posts'; // Use @/ alias
+import PostCard from '@/components/PostCard'; // Import PostCard
 
 export const metadata = {
   title: 'Guides | Vibe Coding Checklist',
@@ -25,48 +26,27 @@ export default function GuidesIndexPage() {
   const allGuides = getAllPostsMetadata('guides'); // Already sorted newest first
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-8 text-center">All Guides</h1>
+    // Use Inter font (applied via layout), adjust padding/max-width, add dark mode text
+    <div className="container mx-auto px-6 py-16 md:py-24 max-w-4xl font-sans text-neutral-800 dark:text-dark-text">
+      {/* Use dark heading color, adjust size/weight */}
+      <h1 className="text-4xl md:text-5xl font-semibold mb-12 text-center text-neutral-900 dark:text-dark-heading">All Guides</h1>
 
       {allGuides.length === 0 ? (
-        <p className="text-center text-gray-600">No guides published yet.</p>
+         // Use dark muted color
+        <p className="text-center text-neutral-500 dark:text-dark-muted">No guides published yet.</p>
       ) : (
-        <div className="space-y-8">
-          {allGuides.map((guide) => (
-            <article key={guide.slug} className="p-6 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-              <div className="flex justify-between items-center mb-3 text-sm text-gray-500">
-                <span className="bg-primary-100 text-primary-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
-                  {guide.format || 'Guide'} {/* Display format */}
-                </span>
-                <span className="text-sm">{formatDate(guide.publishedAt)}</span>
-              </div>
-              <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                <Link href={`/guides/${guide.slug}`} className="hover:underline">
-                  {guide.title}
-                </Link>
-              </h2>
-              <p className="mb-4 font-light text-gray-600 dark:text-gray-400">
-                {guide.description}
-              </p>
-              <div className="flex justify-between items-center">
-                <Link href={`/guides/${guide.slug}`} className="inline-flex items-center font-medium text-primary-600 hover:underline dark:text-primary-500">
-                  Read more
-                  <svg className="ml-2 w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
-                </Link>
-                <div className="text-sm text-gray-500">
-                  {guide.readingTime ? `${guide.readingTime} min read` : ''}
-                </div>
-              </div>
-              {guide.tags && guide.tags.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {guide.tags.map((tag) => (
-                    <span key={tag} className="text-xs font-medium bg-gray-100 text-gray-800 px-2 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </article>
+        // Use PostCard component for consistency in a grid
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {allGuides.map((guide: PostMetadata) => ( // Added type annotation
+            <PostCard
+              key={guide.slug}
+              slug={guide.slug}
+              title={guide.title}
+              description={guide.description}
+              publishedAt={guide.publishedAt}
+              tags={guide.tags}
+              // readingTime prop is not accepted by PostCard currently, can be added if needed
+            />
           ))}
         </div>
       )}

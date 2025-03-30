@@ -1,27 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;700&display=swap');
-/* Replace @import with Tailwind directives */
+/* Updated font import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+Pro:wght@400;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-/* Removed @theme inline block for diagnostics */
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Removed CSS variable definitions for background/foreground */
+/* Base styles will be applied via Tailwind classes on html/body */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   /* font-family will be handled by Tailwind's font-sans class on html/body */
+  /* Apply base text color for light mode, dark mode handled by dark: variant */
+  @apply text-neutral-800; 
 }
 
 /* Styles for rehype-autolink-headings */
@@ -32,11 +21,11 @@ body {
   }
 
   /* Style the anchor link added by rehype-autolink-headings */
-  /* .anchor-link { */
-    /* Removed @apply rule entirely for diagnostics */
-    /* @apply absolute left-[-1em] no-underline text-gray-400 opacity-0 transition-opacity; */
+  .anchor-link {
+    /* Restored @apply rule with standard utilities */
+    @apply absolute left-[-1em] top-0 bottom-0 no-underline text-gray-400 opacity-0 transition-opacity dark:text-gray-600; 
     /* Adjust 'left' value as needed */
-  /* } */
+  }
 
   /* Show anchor link on heading hover */
   h2[id]:hover .anchor-link,

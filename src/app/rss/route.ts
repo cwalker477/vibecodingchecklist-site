@@ -1,16 +1,17 @@
 import { NextResponse } from 'next/server';
-import { getAllPostsMetadata, PostMetadata } from '@/lib/posts';
+import { getAllPostsMetadata, PostMetadata } from '@/lib/posts'; // Use @/ alias now lib is in src
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vibecodingchecklist.vercel.app';
 
+// Correct escapeXml function
 function escapeXml(str: string): string {
   return str.replace(/[<>&'"]/g, (c) => {
     switch (c) {
-      case '<': return '&lt;';
-      case '>': return '&gt;';
-      case '&': return '&amp;';
-      case "'": return '&apos;';
-      case '"': return '&quot;';
+      case '<': return '<';
+      case '>': return '>';
+      case '&': return '&';
+      case "'": return ''';
+      case '"': return '"';
       default: return c;
     }
   });
@@ -20,15 +21,11 @@ export async function GET() {
   const allGuides = getAllPostsMetadata('guides');
 
   const rssItems = allGuides
-    .map((guide: PostMetadata) => {
+    .map((guide: PostMetadata) => { 
       const guideUrl = `${SITE_URL}/guides/${guide.slug}`;
       const title = guide.title ? escapeXml(guide.title) : 'Untitled Post';
-      const description = guide.description
-        ? escapeXml(guide.description)
-        : 'A new guide from Vibe Coding Checklist.';
-      const pubDate = guide.publishedAt
-        ? new Date(guide.publishedAt).toUTCString()
-        : new Date().toUTCString();
+      const description = guide.description ? escapeXml(guide.description) : 'A new guide from Vibe Coding Checklist.';
+      const pubDate = guide.publishedAt ? new Date(guide.publishedAt).toUTCString() : new Date().toUTCString();
 
       return `
         <item>

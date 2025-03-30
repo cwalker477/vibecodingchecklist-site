@@ -23,26 +23,30 @@ function formatDate(isoString: string): string {
 export default function PostCard({ slug, title, publishedAt, description, tags }: PostCardProps) {
   return (
     <Link
-      href={`/guides/${slug}`} // Link to the specific guide page
-      className="block border rounded-lg p-4 dark:border-gray-700 hover:shadow-md dark:hover:border-gray-500 transition-shadow duration-200 ease-in-out group"
+      href={`/guides/${slug}`}
+      // Updated card styles: rounded-2xl, dark-card bg, dark-border, shadow-lg on hover
+      className="block bg-white dark:bg-dark-card border border-neutral-200 dark:border-dark-border rounded-2xl p-6 transition-all duration-300 ease-in-out group hover:shadow-lg hover:-translate-y-1"
     >
-      <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+      {/* Updated heading styles: dark-heading color, accent on hover */}
+      <h3 className="font-semibold text-lg md:text-xl mb-2 text-neutral-900 dark:text-dark-heading group-hover:text-dark-accent transition-colors">
         {title}
       </h3>
       {description && (
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2"> {/* Limit description lines */}
+         // Updated description styles: dark-muted color
+        <p className="text-sm text-neutral-600 dark:text-dark-muted mb-4 line-clamp-2"> 
           {description}
         </p>
       )}
-      <div className="text-xs text-gray-500 dark:text-gray-500">
-        {formatDate(publishedAt)} {/* Use publishedAt and format */}
+       // Updated meta styles: dark-muted color
+      <div className="text-xs text-neutral-500 dark:text-dark-muted">
+        {formatDate(publishedAt)}
       </div>
-      {/* Uncommented and updated tag display */}
       {tags && tags.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2"> {/* Added margin-top */}
+        <div className="mt-4 flex flex-wrap gap-2"> {/* Increased margin-top */}
           {tags.map((tag) => (
-            <span key={tag} className="text-xs font-medium bg-gray-100 text-gray-800 px-2 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"> {/* Consistent tag style */}
-              #{tag}
+             // Updated tag styles: accent color text, lighter bg
+            <span key={tag} className="text-xs font-medium bg-blue-50 dark:bg-dark-accent/10 text-dark-accent px-2.5 py-1 rounded-full"> 
+              {tag} 
             </span>
           ))}
         </div>
