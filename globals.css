@@ -9,27 +9,41 @@
 
 body {
   /* font-family will be handled by Tailwind's font-sans class on html/body */
-  /* Apply base text color for light mode, dark mode handled by dark: variant */
-  @apply text-neutral-800; 
+  /* Removed base text color @apply rule */
 }
 
 /* Styles for rehype-autolink-headings */
 @layer base {
   /* Add scroll margin top to offset fixed header/TOC - Removed scroll-mt-24 */
   h2[id], h3[id] {
-    @apply relative; /* Keep relative positioning */
+     /* Removed @apply relative; */
+     position: relative; /* Apply directly */
   }
 
   /* Style the anchor link added by rehype-autolink-headings */
-  .anchor-link {
-    /* Restored @apply rule with standard utilities */
-    @apply absolute left-[-1em] top-0 bottom-0 no-underline text-gray-400 opacity-0 transition-opacity dark:text-gray-600; 
-    /* Adjust 'left' value as needed */
-  }
+   .anchor-link { 
+     /* Removed @apply rule entirely */
+     position: absolute;
+     left: -1em; 
+     /* top: 0; */ /* Removed */
+     /* bottom: 0; */ /* Removed */
+     text-decoration: none;
+     color: theme('colors.gray.400'); /* Apply color directly */
+     opacity: 0;
+     transition-property: opacity;
+     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+     transition-duration: 150ms;
+   }
+   /* Apply dark mode color directly */
+   .dark .anchor-link {
+       color: theme('colors.gray.600');
+   }
+
 
   /* Show anchor link on heading hover */
-  h2[id]:hover .anchor-link,
-  h3[id]:hover .anchor-link {
-    @apply opacity-100;
-  }
+   h2[id]:hover .anchor-link, 
+   h3[id]:hover .anchor-link { 
+     /* Removed @apply opacity-100; */
+     opacity: 1; /* Apply directly */
+   } 
 }
