@@ -1,88 +1,46 @@
-import { notFound } from 'next/navigation';
-import { MDXRemote } from 'next-mdx-remote/rsc'; // Import RSC version
-import { getAllPostSlugs, getPostData, PostMetadata } from '@/lib/posts'; // Use @/ alias now lib is in src
-import GuideLayout from '@/components/GuideLayout'; // Keep @/ alias for src components
-import remarkGfm from 'remark-gfm'; // Ensure plugins used during serialization are available for rendering if needed
-import rehypeSlug from 'rehype-slug';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import { getPostData } from '@/lib/posts'; // Use getPostData instead of getSinglePost
+import { MDXRemote } from 'next-mdx-remote/rsc';
 
-// Define the props type for the page component
-interface GuidePageProps {
-  params: {
-    slug: string;
-  };
-}
-
-// Generate static paths for all guides at build time
-export async function generateStaticParams() {
-  // Use @/ alias
-  const paths = getAllPostSlugs('guides'); // Get slugs from lib/posts
-  return paths; // Returns [{ params: { slug: '...' } }, ...]
-}
-
-// Generate dynamic metadata for each guide page
-export async function generateMetadata({ params }: GuidePageProps): Promise<{ title: string; description: string }> {
-  try {
-    // Use @/ alias
-    const postData = await getPostData('guides', params.slug);
-    return {
-      title: `${postData.title} | Vibe Coding Checklist`,
-      description: postData.description || 'A guide from Vibe Coding Checklist.',
-      // Add other metadata like open graph tags here if needed
-    };
-  } catch (error) {
-    // Handle case where post data fetch fails (e.g., file not found)
-    // Although notFound() in the page component handles rendering,
-    // providing default metadata might be good practice.
-    console.error(`Error fetching metadata for slug "${params.slug}":`, error);
-    return {
-      title: 'Guide Not Found | Vibe Coding Checklist',
-      description: 'The requested guide could not be found.',
-    };
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  // Assuming getPostData returns metadata including title
+  const post = await getPostData('guides', params.slug); // Use getPostData
+  if (!post) {
+    // Handle case where post is not found
+    return { title: 'Guide not found' };
   }
+  return { title: post.metadata.title };
 }
 
+// Optional: Generate static paths if you want to pre-render guides at build time
+// export async function generateStaticParams() {
+//   const posts = await getAllPostsMetadata('guides'); // Assuming getAllPostsMetadata exists
+//   return posts.map((post) => ({
+//     slug: post.slug,
+//   }));
+// }
 
-// The main page component
-export default async function GuidePage({ params }: GuidePageProps) {
-  let postData: Awaited<ReturnType<typeof getPostData>>;
+export default async function GuidePage({ params }: { params: { slug: string } }) {
+  const post = await getPostData('guides', params.slug); // Use getPostData
 
-  try {
-    // Fetch the specific post data, including serialized MDX source
-    // Use @/ alias
-    postData = await getPostData('guides', params.slug);
-  } catch (error) {
-    // If getPostData throws (e.g., file not found), trigger a 404
-    console.error(`Error fetching post data for slug "${params.slug}":`, error);
-    notFound();
+  if (!post) {
+    // Handle post not found, e.g., return a 404 component or message
+    return <div>Guide not found.</div>;
   }
 
-  // Extract metadata and MDX source
-  const { mdxSource, ...meta } = postData;
-
-  // Define components to be used within MDX (optional)
-  // const components = {
-  //   // Example: Custom component for h2 tags
-  //   // h2: (props) => <h2 className="text-2xl font-bold mt-8 mb-4" {...props} />,
-  //   // Add other custom components here
-  // };
+  // getPostData returns mdxSource (serialized) and metadata
+  const { mdxSource, ...metadata } = post; // Destructure mdxSource and remaining metadata
 
   return (
-    // Use @/ alias
-    <GuideLayout meta={meta}>
-      {/* Render the MDX content */}
-      {/* Pass optional components if defined */}
-      <MDXRemote
-        source={mdxSource}
-        // components={components}
-        options={{
-            mdxOptions: {
-              // Pass the same plugins used during serialization if they affect output/rendering
-              remarkPlugins: [remarkGfm],
-              rehypePlugins: [rehypeSlug, rehypeAutolinkHeadings],
-            }
-        }}
-      />
-    </GuideLayout>
+    // Using GuideLayout for consistency, assuming it provides basic structure
+    // If GuideLayout adds unwanted styles, replace with a simple <main> tag
+    // <GuideLayout metadata={metadata}>
+    <main className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8"> {/* Added basic padding */}
+      <h1 className="text-3xl font-bold mb-6">{metadata.title}</h1> {/* Basic title styling */}
+      {/* Using prose for basic MD rendering, remove if causing issues. Ensure prose styles are available or remove class. */}
+      <div className="prose prose-invert max-w-none">
+        <MDXRemote source={mdxSource} /> {/* Use mdxSource */}
+      </div>
+    </main>
+    // </GuideLayout>
   );
 }
