@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getAllPostsMetadata, PostMetadata } from '@/lib/posts'; // Use @/ alias now lib is in src
+// Import from Supabase libraries
+import { getAllPublishedBlogPostsMetadata, BlogPostMetadata } from '@/lib/blog';
+import { getAllPublishedGuidesMetadata, GuideMetadata } from '@/lib/guides';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vibecodingchecklist.vercel.app';
 
@@ -17,22 +19,62 @@ function escapeXml(str: string): string {
   });
 }
 
-export async function GET() {
-  const allGuides = getAllPostsMetadata('guides');
+// Define a common structure for combined items
+interface FeedItem {
+  type: 'blog' | 'guide';
+  slug: string;
+  title: string;
+  excerpt?: string;
+  published_at?: string; // Keep as string for sorting
+}
 
-  const rssItems = allGuides
-    .map((guide: PostMetadata) => {
-      const guideUrl = `${SITE_URL}/guides/${guide.slug}`;
+export async function GET() {
+  // Fetch both blog posts and guides
+  const [blogPosts, guides] = await Promise.all([
+    getAllPublishedBlogPostsMetadata(),
+    getAllPublishedGuidesMetadata()
+  ]);
+
+  // Map to common structure and add type identifier
+  const combinedItems: FeedItem[] = [
+    ...blogPosts.map((post): FeedItem => ({
+      type: 'blog',
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      published_at: post.published_at,
+    })),
+    ...guides.map((guide): FeedItem => ({
+      type: 'guide',
+      slug: guide.slug,
+      title: guide.title,
+      excerpt: guide.excerpt,
+      published_at: guide.published_at,
+    })),
+  ];
+
+  // Sort combined items by published_at date (newest first)
+  combinedItems.sort((a, b) => {
+    const dateA = a.published_at ? new Date(a.published_at).getTime() : 0;
+    const dateB = b.published_at ? new Date(b.published_at).getTime() : 0;
+    return dateB - dateA; // Descending order
+  });
+
+
+  const rssItems = combinedItems
+    .map((item: FeedItem) => {
+      const itemUrl = `${SITE_URL}/${item.type === 'blog' ? 'blog' : 'guides'}/${item.slug}`;
       // Ensure title and description are escaped
-      const title = guide.title ? escapeXml(guide.title) : 'Untitled Post';
-      const description = guide.description ? escapeXml(guide.description) : 'A new guide from Vibe Coding Checklist.';
-      const pubDate = guide.publishedAt ? new Date(guide.publishedAt).toUTCString() : new Date().toUTCString();
+      const title = item.title ? escapeXml(item.title) : 'Untitled Post';
+      // Use excerpt if available, otherwise a default description
+      const description = item.excerpt ? escapeXml(item.excerpt) : `A new ${item.type} from Vibe Coding Checklist.`;
+      const pubDate = item.published_at ? new Date(item.published_at).toUTCString() : new Date().toUTCString();
 
       return `
         <item>
           <title>${title}</title>
-          <link>${guideUrl}</link>
-          <guid>${guideUrl}</guid>
+          <link>${itemUrl}</link>
+          <guid>${itemUrl}</guid>
           <pubDate>${pubDate}</pubDate>
           <description>${description}</description>
         </item>
@@ -43,9 +85,9 @@ export async function GET() {
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Vibe Coding Checklist - Guides</title>
+    <title>Vibe Coding Checklist - Blog & Guides</title> {/* Updated title */}
     <link>${SITE_URL}</link>
-    <description>Guides, checklists, and brain dumps on AI-assisted development from Vibe Coding Checklist.</description>
+    <description>Latest blog posts and guides on AI-assisted development from Vibe Coding Checklist.</description> {/* Updated description */}
     <language>en-us</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml" />
