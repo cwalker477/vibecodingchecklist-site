@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation';
-import { getGuideBySlug, getAllPublishedGuidesMetadata, Guide } from '@/lib/guides'; // Import getAllPublishedGuidesMetadata
+// Removed duplicate import
+import { getGuideBySlug, getAllPublishedGuidesMetadata, Guide } from '@/lib/guides';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import type { Metadata, ResolvingMetadata } from 'next';
-import GuideLayout from '@/components/GuideLayout'; // Import the layout component
+// import GuideLayout from '@/components/GuideLayout'; // Temporarily comment out layout
 
 // Revalidate data periodically or on-demand
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 3600;
 
 type Props = {
   params: { slug: string };
@@ -58,13 +59,21 @@ export default async function GuidePage({ params }: Props) {
 
   // guide includes mdxSource and all other Guide fields
   // Rename guideMetadata to avoid conflict with the meta prop name in GuideLayout
-  const { mdxSource, ...guideData } = guide;
+  const { mdxSource, ...guideData } = guide; // Keep guideData for potential future use
 
+  // Temporarily render only MDXRemote for debugging
   return (
-    // Use the GuideLayout component, passing the fetched guide data
+    <main className="p-8"> {/* Add some padding */}
+      <h1>Debug: Rendering MDX Content Directly</h1>
+      <hr className="my-4"/>
+      <MDXRemote source={mdxSource} />
+    </main>
+  );
+  /* Original code:
+  return (
     <GuideLayout meta={guideData}>
-      {/* Render the MDX content inside the layout */}
       <MDXRemote source={mdxSource} />
     </GuideLayout>
   );
+  */
 }
