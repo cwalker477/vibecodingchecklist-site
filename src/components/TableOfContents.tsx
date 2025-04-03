@@ -1,7 +1,14 @@
 "use client"; // Mark this as a Client Component
 
 import { useState, useEffect, useRef } from 'react';
-import { Heading } from '@/lib/posts'; // Import the Heading type
+// Removed import from '@/lib/posts'
+
+// Define the Heading type locally
+interface Heading {
+  level: number;
+  text: string;
+  slug: string;
+}
 
 interface TableOfContentsProps {
   headings: Heading[];
