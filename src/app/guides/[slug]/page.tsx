@@ -3,10 +3,10 @@ import { notFound } from 'next/navigation';
 import { getGuideBySlug, getAllPublishedGuidesMetadata, Guide } from '@/lib/guides';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import type { Metadata, ResolvingMetadata } from 'next';
-// import GuideLayout from '@/components/GuideLayout'; // Temporarily comment out layout
+// import GuideLayout from '@/components/GuideLayout';
 
-// Revalidate data periodically or on-demand
-export const revalidate = 3600;
+// Remove revalidate to simplify caching during debug
+// export const revalidate = 3600;
 
 type Props = {
   params: { slug: string };
@@ -59,11 +59,20 @@ export default async function GuidePage({ params }: Props) {
 
   // guide includes mdxSource and all other Guide fields
   // Rename guideMetadata to avoid conflict with the meta prop name in GuideLayout
-  const { mdxSource, ...guideData } = guide; // Keep guideData for potential future use
+  // const { mdxSource, ...guideData } = guide; // Don't need this for static test
 
-  // --- Render mdxSource directly for debugging ---
+  // --- Return static content to test deployment ---
   return (
-    <main className="p-8 font-mono text-xs"> {/* Basic styling for readability */}
+    <main className="p-8">
+      <h1>Testing Deployment...</h1>
+      <p>If you see this message, the deployment is working.</p>
+      <p>Slug requested: {params.slug}</p>
+    </main>
+  );
+  /* Original code with debug:
+  const { mdxSource, ...guideData } = guide;
+  return (
+    <main className="p-8 font-mono text-xs">
       <h1>Debug: Serialized mdxSource Output & MDXRemote Render</h1>
       <hr className="my-4"/>
       <h2>Serialized Output:</h2>
@@ -72,11 +81,12 @@ export default async function GuidePage({ params }: Props) {
       </pre>
       <hr className="my-4"/>
       <h2>MDXRemote Render Attempt:</h2>
-      <div className="prose dark:prose-invert max-w-none mt-4 border p-4 border-dashed"> {/* Add prose styles back for MDXRemote */}
-        <MDXRemote source={mdxSource} /> {/* Uncomment MDXRemote */}
+      <div className="prose dark:prose-invert max-w-none mt-4 border p-4 border-dashed">
+        <MDXRemote source={mdxSource} />
       </div>
     </main>
   );
+  */
   /* Original code:
   return (
     <GuideLayout meta={guideData}>
