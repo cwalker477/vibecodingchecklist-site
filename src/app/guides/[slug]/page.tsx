@@ -64,12 +64,17 @@ export default async function GuidePage({ params }: Props) {
   // --- Render mdxSource directly for debugging ---
   return (
     <main className="p-8 font-mono text-xs"> {/* Basic styling for readability */}
-      <h1>Debug: Serialized mdxSource Output</h1>
+      <h1>Debug: Serialized mdxSource Output & MDXRemote Render</h1>
       <hr className="my-4"/>
-      <pre className="whitespace-pre-wrap break-words">
+      <h2>Serialized Output:</h2>
+      <pre className="whitespace-pre-wrap break-words border p-2 my-2 bg-neutral-100 dark:bg-neutral-800">
         {JSON.stringify(mdxSource, null, 2)}
       </pre>
-      {/* <MDXRemote source={mdxSource} /> */} {/* Keep MDXRemote commented out for now */}
+      <hr className="my-4"/>
+      <h2>MDXRemote Render Attempt:</h2>
+      <div className="prose dark:prose-invert max-w-none mt-4 border p-4 border-dashed"> {/* Add prose styles back for MDXRemote */}
+        <MDXRemote source={mdxSource} /> {/* Uncomment MDXRemote */}
+      </div>
     </main>
   );
   /* Original code:
