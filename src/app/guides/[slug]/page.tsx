@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation';
-import { getGuideBySlug, Guide } from '@/lib/guides'; // Import from new guides lib
+import { getGuideBySlug, getAllPublishedGuidesMetadata, Guide } from '@/lib/guides'; // Import getAllPublishedGuidesMetadata
 import { MDXRemote } from 'next-mdx-remote/rsc';
-import type { Metadata, ResolvingMetadata } from 'next'; // Import Metadata types
+import type { Metadata, ResolvingMetadata } from 'next';
+import GuideLayout from '@/components/GuideLayout'; // Import the layout component
 
 // Revalidate data periodically or on-demand
 export const revalidate = 3600; // Revalidate every hour
@@ -39,15 +40,15 @@ export async function generateMetadata(
   };
 }
 
-// Optional: Generate static paths if you want to pre-render guides at build time
-// export async function generateStaticParams() {
-//   const posts = await getAllPostsMetadata('guides'); // Assuming getAllPostsMetadata exists
-//   return posts.map((post) => ({
-//     slug: post.slug,
-//   }));
-// }
+// Generate static paths for all published guides
+export async function generateStaticParams() {
+  const guides = await getAllPublishedGuidesMetadata(); // Use the correct function
+  return guides.map((guide) => ({
+    slug: guide.slug,
+  }));
+}
 
-export default async function GuidePage({ params }: Props) { // Use Props type
+export default async function GuidePage({ params }: Props) {
   const slug = params.slug;
   const guide = await getGuideBySlug(slug); // Use getGuideBySlug
 
@@ -56,25 +57,14 @@ export default async function GuidePage({ params }: Props) { // Use Props type
   }
 
   // guide includes mdxSource and all other Guide fields
-  const { mdxSource, ...guideMetadata } = guide;
+  // Rename guideMetadata to avoid conflict with the meta prop name in GuideLayout
+  const { mdxSource, ...guideData } = guide;
 
   return (
-    // Using GuideLayout for consistency, assuming it provides basic structure
-    // If GuideLayout adds unwanted styles, replace with a simple <main> tag
-    // <GuideLayout metadata={guideMetadata}> // Pass guideMetadata if using layout
-    <main className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8"> {/* Added basic padding */}
-      <h1 className="text-3xl font-bold mb-6">{guideMetadata.title}</h1> {/* Use guide title */}
-      {/* Add other metadata display here if needed - e.g., published date, author */}
-      {guideMetadata.published_at && (
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
-          Published on {new Date(guideMetadata.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-        </p>
-      )}
-      {/* Using prose for basic MD rendering. Ensure @tailwindcss/typography is configured */}
-      <div className="prose dark:prose-invert max-w-none">
-        <MDXRemote source={mdxSource} /> {/* Use mdxSource from guide */}
-      </div>
-    </main>
-    // </GuideLayout>
+    // Use the GuideLayout component, passing the fetched guide data
+    <GuideLayout meta={guideData}>
+      {/* Render the MDX content inside the layout */}
+      <MDXRemote source={mdxSource} />
+    </GuideLayout>
   );
 }
