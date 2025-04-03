@@ -2,29 +2,41 @@
 
 ## Current Work Focus
 
-*   **Phase:** Project Scaffolding
-*   **Goal:** Restructure project layout for Vercel deployment by moving the Next.js app to the root directory.
+*   **Phase:** Backend Integration / Content System Migration
+*   **Goal:** Migrate Guides content management from local Markdown files to Supabase.
 
 ## Recent Changes
 
-*   Defined and documented the full technology stack (Next.js, Markdown, Tailwind, Vercel, Serverless Functions) in `techContext.md`.
-*   Defined and documented the system architecture in `systemPatterns.md`.
-*   Moved Next.js project files from `vibecodingchecklist-site/` to the root directory.
-*   Removed the empty `vibecodingchecklist-site/` directory.
-*   Committed and pushed changes to GitHub.
-*   Resolved persistent Tailwind v4 build errors after migrating `gray` to `neutral` by adjusting configurations, reinstalling dependencies, and clearing caches.
-*   Fixed TypeScript syntax error in `src/app/rss/route.ts`.
-*   Applied initial dark mode theme styling and typography improvements (Inter font, spacing, contrast) to layout, homepage, and guide layout components.
+*   **Blog Integration:**
+    *   Installed Supabase client library (`@supabase/supabase-js`).
+    *   Created `.env.local` with Supabase Project URL and Anon Key.
+    *   Created Supabase client utility (`src/lib/supabaseClient.ts`).
+    *   Created data fetching functions for blog posts (`src/lib/blog.ts`).
+    *   Refactored `PostCard` component (`src/components/PostCard.tsx`) for reusability.
+    *   Created blog index page (`src/app/blog/page.tsx`).
+    *   Created dynamic blog post page (`src/app/blog/[slug]/page.tsx`).
+*   **Guides Migration:**
+    *   Created data fetching functions for guides (`src/lib/guides.ts`) querying Supabase `guides` table.
+    *   Updated individual guide page (`src/app/guides/[slug]/page.tsx`) to use Supabase data.
+    *   Updated guides index page (`src/app/guides/page.tsx`) to use Supabase data.
+    *   Updated homepage (`app/page.tsx`) to fetch featured guides from Supabase.
+*   **Cleanup & Navigation:**
+    *   Deprecated old Markdown processing code (`src/lib/posts.ts`).
+    *   Deleted obsolete `/content/guides` directory.
+    *   Added basic site navigation (Home, Guides, Blog) to `app/layout.tsx`.
 
 ## Next Steps
 
-*   **Verify Vercel Deployment:** Commit changes, push, and confirm the site builds and deploys correctly on Vercel.
-*   **Refine Dark Theme:** Continue applying and refining the dark mode theme across all components and content based on Notion/Medium inspiration.
-*   **Anchor Link Styling:** Revisit `.anchor-link` styling in `globals.css` if the current fallback colors are not ideal.
-*   **Production Polish:** Address SEO, Open Graph, `.env` configuration as per user guidance.
+*   **Commit & Push:** Commit recent changes (Supabase integration, cleanup, navigation) and push to GitHub.
+*   **Verification (Post-Deployment):** User to verify `/guides`, `/guides/[slug]`, `/blog`, `/blog/[slug]`, and homepage featured guides render correctly on the deployed Vercel site using Supabase data.
+*   **Documentation:** Update `memory-bank/systemPatterns.md` and `progress.md`.
+*   **Refine Styling:** Revisit styling for blog/guide pages, `PostCard`, and header.
+*   **Production Polish:** Address SEO, Open Graph for blog/guide posts.
 *   **Start Implementing UI Blocks:** Begin creating components based on `uiBlocks.md`.
 
 ## Active Decisions & Considerations
 
-*   **`create-next-app` options:** Using `--typescript`, `--tailwind`, `--eslint`, `--app` (for App Router), `--src-dir`, `--import-alias "@/*"`. Using `pnpm`.
-*   **Directory Structure:** Project files are now located at the root level. Content is in `/content/`.
+*   **Content System:** Migrated Guides and Blog Posts to Supabase. Other content types (comparisons, etc.) still use local Markdown in `/content/`.
+*   **Supabase Tables:** Using `blog_posts` and `guides` tables with defined structures.
+*   **MDX Rendering:** Using `next-mdx-remote/rsc` for rendering `content` field from Supabase tables.
+*   **Package Manager:** Using `npm` as `pnpm` was not found.

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getAllPostsMetadata, PostMetadata } from '@/lib/posts'; // Use @/ alias
+import { getAllPublishedGuidesMetadata, GuideMetadata } from '@/lib/guides'; // Import from new guides lib
 import PostCard from '@/components/PostCard'; // Import PostCard
 
 export const metadata = {
@@ -7,23 +7,20 @@ export const metadata = {
   description: 'Browse all guides, checklists, and brain dumps on AI-assisted development.',
 };
 
-// Helper function to format date nicely
-function formatDate(isoString: string): string {
-  try {
-    return new Date(isoString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  } catch (e) {
-    console.error("Error formatting date:", isoString, e);
-    return isoString; // Fallback to original string
-  }
-}
+// Revalidate data periodically (e.g., every hour) or on-demand
+export const revalidate = 3600; // Revalidate every hour
 
-export default function GuidesIndexPage() {
-  // Fetch metadata for all posts in the 'guides' directory
-  const allGuides = getAllPostsMetadata('guides'); // Already sorted newest first
+// Removed formatDate helper, PostCard handles it
+
+export default async function GuidesIndexPage() { // Make component async
+  let allGuides: GuideMetadata[] = [];
+  try {
+    // Fetch metadata for all published guides from Supabase
+    allGuides = await getAllPublishedGuidesMetadata(); // Already sorted newest first
+  } catch (error) {
+    console.error("Failed to fetch guides:", error);
+    // Optionally render an error state
+  }
 
   return (
     // Use Inter font (applied via layout), adjust padding/max-width, add dark mode text
@@ -37,15 +34,15 @@ export default function GuidesIndexPage() {
       ) : (
         // Use PostCard component for consistency in a grid
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {allGuides.map((guide: PostMetadata) => ( // Added type annotation
+          {allGuides.map((guide) => ( // Use GuideMetadata type implicitly
             <PostCard
               key={guide.slug}
-              slug={guide.slug}
+              href={`/guides/${guide.slug}`} // Construct href
               title={guide.title}
-              description={guide.description}
-              publishedAt={guide.publishedAt}
+              description={guide.excerpt || ''} // Use excerpt, provide default
+              publishedAt={guide.published_at} // Use published_at
               tags={guide.tags}
-              // readingTime prop is not accepted by PostCard currently, can be added if needed
+              // Add other props like featured_image_url if PostCard is updated to support them
             />
           ))}
         </div>

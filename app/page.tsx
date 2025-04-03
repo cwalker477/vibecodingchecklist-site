@@ -1,12 +1,21 @@
 import React from 'react';
 import Link from 'next/link';
-import { getAllPostsMetadata, PostMetadata } from '@/lib/posts'; 
-import PostCard from '@/components/PostCard'; 
+import { getAllPublishedGuidesMetadata, GuideMetadata } from '@/lib/guides'; // Import from guides lib
+import PostCard from '@/components/PostCard';
 
-export default function HomePage() { 
-  const posts = getAllPostsMetadata('guides');
-  // Get latest 3 for featured section
-  const featuredPosts = posts.slice(0, 3); 
+// Revalidate data periodically (e.g., every hour) or on-demand
+export const revalidate = 3600; // Revalidate every hour
+
+export default async function HomePage() { // Make component async
+  let featuredPosts: GuideMetadata[] = [];
+  try {
+    const allGuides = await getAllPublishedGuidesMetadata();
+    // Get latest 3 for featured section
+    featuredPosts = allGuides.slice(0, 3);
+  } catch (error) {
+    console.error("Failed to fetch featured guides for homepage:", error);
+    // featuredPosts will remain empty, section won't render
+  }
 
   return (
     // Add leading-relaxed for better readability
@@ -27,14 +36,14 @@ export default function HomePage() {
            {/* Ensure dark heading color is applied */}
            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-8 text-center text-neutral-900 dark:text-dark-heading">Featured Guides</h2>
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredPosts.map((post: PostMetadata) => (
+            {featuredPosts.map((guide) => ( // Use guide variable
               <PostCard
-                key={post.slug}
-                slug={post.slug}
-                title={post.title}
-                description={post.description}
-                publishedAt={post.publishedAt}
-                tags={post.tags}
+                key={guide.slug}
+                href={`/guides/${guide.slug}`} // Construct href
+                title={guide.title}
+                description={guide.excerpt || ''} // Use excerpt
+                publishedAt={guide.published_at} // Use published_at
+                tags={guide.tags}
               />
             ))}
           </div>

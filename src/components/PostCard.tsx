@@ -1,12 +1,17 @@
 import Link from 'next/link';
 
-import { PostMetadata } from '@/lib/posts'; // This alias should now work correctly
-
-// Update props to use PostMetadata fields
-type PostCardProps = Pick<PostMetadata, 'slug' | 'title' | 'publishedAt' | 'description' | 'tags'>;
+// Define props explicitly for reusability
+interface PostCardProps {
+  href: string; // Accept full href directly
+  title: string;
+  publishedAt?: string; // Make date optional
+  description?: string; // Make description optional
+  tags?: string[]; // Make tags optional
+}
 
 // Helper function to format date nicely
-function formatDate(isoString: string): string {
+function formatDate(isoString: string | undefined): string {
+  if (!isoString) return ''; // Handle undefined date
   try {
     return new Date(isoString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -20,10 +25,10 @@ function formatDate(isoString: string): string {
 }
 
 
-export default function PostCard({ slug, title, publishedAt, description, tags }: PostCardProps) {
+export default function PostCard({ href, title, publishedAt, description, tags }: PostCardProps) {
   return (
     <Link
-      href={`/guides/${slug}`}
+      href={href} // Use the passed href
       // Updated card styles: rounded-2xl, dark-card bg, dark-border, shadow-lg on hover
       className="block bg-white dark:bg-dark-card border border-neutral-200 dark:border-dark-border rounded-2xl p-6 transition-all duration-300 ease-in-out group hover:shadow-lg hover:-translate-y-1"
     >
@@ -37,10 +42,12 @@ export default function PostCard({ slug, title, publishedAt, description, tags }
           {description}
         </p>
       )}
-       // Updated meta styles: dark-muted color
-      <div className="text-xs text-neutral-500 dark:text-dark-muted">
-        {formatDate(publishedAt)}
-      </div>
+      {publishedAt && ( // Conditionally render date if provided
+         // Updated meta styles: dark-muted color
+        <div className="text-xs text-neutral-500 dark:text-dark-muted">
+          {formatDate(publishedAt)}
+        </div>
+      )}
       {tags && tags.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-2"> {/* Increased margin-top */}
           {tags.map((tag) => (
