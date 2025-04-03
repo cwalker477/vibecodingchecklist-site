@@ -3,13 +3,14 @@ import { notFound } from 'next/navigation';
 import { getGuideBySlug, getAllPublishedGuidesMetadata, Guide } from '@/lib/guides';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import type { Metadata, ResolvingMetadata } from 'next';
-// import GuideLayout from '@/components/GuideLayout';
+import GuideLayout from '@/components/GuideLayout'; // Restore layout import
 
-// Remove revalidate to simplify caching during debug
-// export const revalidate = 3600;
+// Restore revalidate
+export const revalidate = 3600;
 
 type Props = {
-  params: { slug: string };
+  // Use the renamed parameter here
+  params: { guideSlug: string };
 };
 
 // Generate metadata dynamically based on the post
@@ -17,8 +18,9 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const slug = params.slug;
-  const guide = await getGuideBySlug(slug); // Use getGuideBySlug
+  // Use the renamed parameter here
+  const slug = params.guideSlug;
+  const guide = await getGuideBySlug(slug);
 
   if (!guide) {
     // No specific metadata if guide not found (notFound will handle the page)
@@ -43,31 +45,30 @@ export async function generateMetadata(
 
 // Generate static paths for all published guides
 export async function generateStaticParams() {
-  const guides = await getAllPublishedGuidesMetadata(); // Use the correct function
+  const guides = await getAllPublishedGuidesMetadata();
+  // Return the renamed parameter here
   return guides.map((guide) => ({
-    slug: guide.slug,
+    guideSlug: guide.slug,
   }));
 }
 
 export default async function GuidePage({ params }: Props) {
-  const slug = params.slug;
-  const guide = await getGuideBySlug(slug); // Use getGuideBySlug
+  // Use the renamed parameter here
+  const slug = params.guideSlug;
+  const guide = await getGuideBySlug(slug);
 
   if (!guide) {
-    notFound(); // Trigger 404 page if guide not found or not published
+    notFound();
   }
 
   // guide includes mdxSource and all other Guide fields
-  // Rename guideMetadata to avoid conflict with the meta prop name in GuideLayout
-  // const { mdxSource, ...guideData } = guide; // Don't need this for static test
+  const { mdxSource, ...guideData } = guide;
 
-  // --- Return static content to test deployment ---
+  // --- Restore original rendering logic ---
   return (
-    <main className="p-8">
-      <h1>Testing Deployment...</h1>
-      <p>If you see this message, the deployment is working.</p>
-      <p>Slug requested: {params.slug}</p>
-    </main>
+    <GuideLayout meta={guideData}>
+      <MDXRemote source={mdxSource} />
+    </GuideLayout>
   );
   /* Original code with debug:
   const { mdxSource, ...guideData } = guide;
