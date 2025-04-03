@@ -1,49 +1,53 @@
 import { NextResponse } from 'next/server';
-import { getAllPostsMetadata } from '@/lib/posts'; // Use @/ alias now lib is in src
+// Import from Supabase libraries
+import { getAllPublishedBlogPostsMetadata } from '@/lib/blog';
+import { getAllPublishedGuidesMetadata } from '@/lib/guides';
 
 // IMPORTANT: Replace with your actual production domain
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vibecodingchecklist.vercel.app'; // Updated fallback
 
+// Helper function to generate a sitemap URL entry
+function generateUrlEntry(loc: string, lastmod?: string, changefreq: string = 'weekly', priority: number = 0.8): string {
+  const lastmodEntry = lastmod ? `<lastmod>${new Date(lastmod).toISOString()}</lastmod>` : '';
+  return `
+  <url>
+    <loc>${loc}</loc>
+    ${lastmodEntry}
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority.toFixed(1)}</priority>
+  </url>`;
+}
+
 export async function GET() {
-  // Fetch all guide metadata
-  const allGuides = getAllPostsMetadata('guides');
+  // Fetch metadata for both blog posts and guides
+  const [blogPosts, guides] = await Promise.all([
+    getAllPublishedBlogPostsMetadata(),
+    getAllPublishedGuidesMetadata()
+  ]);
+
+  // Generate sitemap entries for blog posts
+  const blogUrls = blogPosts.map(post =>
+    generateUrlEntry(`${SITE_URL}/blog/${post.slug}`, post.published_at)
+  ).join('');
 
   // Generate sitemap entries for guides
-  const guideUrls = allGuides.map((guide) => {
-    // Use publishedAt for lastmod, fallback to current date if missing (shouldn't happen with validation)
-    const lastMod = guide.publishedAt ? new Date(guide.publishedAt).toISOString() : new Date().toISOString();
-    return `
-    <url>
-      <loc>${SITE_URL}/guides/${guide.slug}</loc>
-      <lastmod>${lastMod}</lastmod>
-      <changefreq>weekly</changefreq> 
-      <priority>0.8</priority> 
-    </url>
-    `;
-    // Note: changefreq and priority are hints for crawlers
-  }).join('');
+  const guideUrls = guides.map(guide =>
+    generateUrlEntry(`${SITE_URL}/guides/${guide.slug}`, guide.published_at)
+  ).join('');
 
-  // Add other static pages if needed
-  const staticUrls = `
-    <url>
-      <loc>${SITE_URL}/</loc>
-      <lastmod>${new Date().toISOString()}</lastmod> 
-      <changefreq>weekly</changefreq>
-      <priority>1.0</priority>
-    </url>
-    <url>
-      <loc>${SITE_URL}/guides</loc> 
-      <lastmod>${new Date().toISOString()}</lastmod>
-      <changefreq>weekly</changefreq>
-      <priority>0.9</priority>
-    </url>
-    `;
+  // Generate entries for static pages
+  const staticUrls = [
+    generateUrlEntry(`${SITE_URL}/`, undefined, 'weekly', 1.0),
+    generateUrlEntry(`${SITE_URL}/guides`, undefined, 'weekly', 0.9),
+    generateUrlEntry(`${SITE_URL}/blog`, undefined, 'weekly', 0.9),
     // Add more static pages like /about, /faq etc. here if they exist
+  ].join('');
 
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${staticUrls}
   ${guideUrls}
+  ${blogUrls}
 </urlset>`;
 
   return new NextResponse(sitemapXml, {
