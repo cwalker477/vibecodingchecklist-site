@@ -61,22 +61,15 @@ export default async function GuidePage({ params }: Props) {
   // Rename guideMetadata to avoid conflict with the meta prop name in GuideLayout
   const { mdxSource, ...guideData } = guide; // Keep guideData for potential future use
 
-  // --- BEGIN DEBUG LOGGING ---
-  console.log(`[GuidePage Debug] Fetched guide object for slug: ${slug}`);
-  // Log the whole guide object (excluding potentially large mdxSource initially)
-  console.log(JSON.stringify(guideData, null, 2));
-  console.log(`[GuidePage Debug] Extracted mdxSource:`);
-  // Log mdxSource separately - Vercel might truncate long logs, but let's try
-  console.log(JSON.stringify(mdxSource, null, 2));
-  console.log(`--- END DEBUG LOGGING ---`);
-  // --- END DEBUG LOGGING ---
-
-  // Temporarily render only MDXRemote for debugging
+  // --- Render mdxSource directly for debugging ---
   return (
-    <main className="p-8"> {/* Add some padding */}
-      <h1>Debug: Rendering MDX Content Directly (Check Vercel Logs)</h1>
+    <main className="p-8 font-mono text-xs"> {/* Basic styling for readability */}
+      <h1>Debug: Serialized mdxSource Output</h1>
       <hr className="my-4"/>
-      <MDXRemote source={mdxSource} />
+      <pre className="whitespace-pre-wrap break-words">
+        {JSON.stringify(mdxSource, null, 2)}
+      </pre>
+      {/* <MDXRemote source={mdxSource} /> */} {/* Keep MDXRemote commented out for now */}
     </main>
   );
   /* Original code:
