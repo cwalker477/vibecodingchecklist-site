@@ -1,8 +1,8 @@
 import React from 'react';
-import { PostMetadata } from '@/lib/posts'; // Use @/ alias now lib is in src
+import { Guide } from '@/lib/guides'; // Import the correct type
 
 interface GuideLayoutProps {
-  meta: PostMetadata;
+  meta: Guide; // Use the Guide type for props
   children: React.ReactNode;
 }
 
@@ -32,8 +32,10 @@ const GuideLayout: React.FC<GuideLayoutProps> = ({ meta, children }) => {
         </h1>
         {/* Use dark muted color */}
         <div className="flex flex-wrap justify-between items-center text-sm text-neutral-500 dark:text-dark-muted mb-5">
-          <span>Published on {formatDate(meta.publishedAt)}</span>
-          {meta.readingTime && <span>{meta.readingTime} min read</span>}
+          {/* Use published_at from Guide type */}
+          {meta.published_at && <span>Published on {formatDate(meta.published_at)}</span>}
+          {/* Use reading_time_minutes from Guide type */}
+          {meta.reading_time_minutes && <span>{meta.reading_time_minutes} min read</span>}
         </div>
         {meta.tags && meta.tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
